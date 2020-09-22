@@ -28,7 +28,7 @@
   "content_security_policy": "default-src 'self';",
   "content_scripts": [
     {
-      "matches": ["https://*/*"],
+      "matches": ["https://www.instagram.com/*"],
       "js": ["js/content.js"]
     }
   ]
