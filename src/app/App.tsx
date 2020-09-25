@@ -7,6 +7,7 @@ import {
   CircularProgress,
   Checkbox,
   TextField,
+  Chip,
 } from "@material-ui/core";
 import * as firebase from "firebase";
 
@@ -20,7 +21,6 @@ import {
   matchDimensions,
 } from "face-api.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBzLog0K1qhvhUfXOmPbADMcoL5NMsvEMk",
   authDomain: "culater-2020.firebaseapp.com",
@@ -64,23 +64,29 @@ const App = () => {
       setTimeout(() => {
         images.forEach((image, idx) => {
           const imageId = `image-${idx}`;
+
           let newCanvas = document.createElement("canvas");
           newCanvas.style.position = "absolute";
           newCanvas.style.top = "0px";
+          newCanvas.setAttribute("id", `canvas-${imageId}`);
 
           let newDiv = document.createElement("div");
-
-          newCanvas.setAttribute("id", `canvas-${imageId}`);
           newDiv.setAttribute("id", imageId);
           newDiv.style.position = "absolute";
           newDiv.style.top = "0px";
 
+          let newCheckDiv = document.createElement("div");
+          newCheckDiv.setAttribute("id", `check-${imageId}`);
+          newCheckDiv.style.position = "absolute";
+          newCheckDiv.style.top = "0px";
+
           image.setAttribute("id", `src-${imageId}`);
           image.setAttribute("crossorigin", "anonymous");
+          image.parentNode.appendChild(newCanvas);
+          image.parentNode.appendChild(newDiv);
           image.parentNode.parentNode.parentNode.parentNode.appendChild(
-            newCanvas
+            newCheckDiv
           );
-          image.parentNode.parentNode.parentNode.parentNode.appendChild(newDiv);
           newImagesIds.push(imageId);
 
           image.setAttribute("data-culater", "used");
@@ -135,25 +141,61 @@ const App = () => {
         placeholder="User Name"
       />
       {imageIds.map((imageId) => (
-        <ImageAddon
-          key={imageId}
-          imageId={imageId}
-          ready={ready}
-          onCheckClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            let newCheckItems = { ...checkItems };
-            newCheckItems[imageId] = !checkItems[imageId];
-            setCheckedItems(newCheckItems);
-          }}
-          checked={!!checkItems[imageId]}
-        />
+        <div key={imageId}>
+          <ImageCheck
+            imageId={imageId}
+            onCheckClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              let newCheckItems = { ...checkItems };
+              newCheckItems[imageId] = !checkItems[imageId];
+              setCheckedItems(newCheckItems);
+            }}
+            checked={!!checkItems[imageId]}
+          />
+
+          <ImageAddon
+            imageId={imageId}
+            ready={ready}
+            onCheckClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              let newCheckItems = { ...checkItems };
+              newCheckItems[imageId] = !checkItems[imageId];
+              setCheckedItems(newCheckItems);
+            }}
+            checked={!!checkItems[imageId]}
+          />
+        </div>
       ))}
     </Paper>
   );
 };
 
 export default App;
+
+const ImageCheck = ({ imageId, checked, onCheckClick }) => {
+  const { Portal } = usePortal({
+    bindTo: document && document.getElementById(`check-${imageId}`),
+  });
+
+  const imageElement = document.getElementById(`src-${imageId}`);
+  const imageDate = getImageDate(imageElement);
+
+  return (
+    <Portal>
+      {imageDate ? (
+        <Checkbox
+          style={{ position: "absolute" }}
+          checked={checked}
+          onClick={onCheckClick}
+        />
+      ) : (
+        <Chip label="No image date :/" />
+      )}
+    </Portal>
+  );
+};
 
 const ImageAddon = ({ imageId, ready, checked, onCheckClick }) => {
   let [loading, setLoading] = useState(true);
@@ -226,9 +268,16 @@ const uploadImages = async (imageIds, user) => {
           let dbRef = firebase.database().ref(`/users/${user}/images`);
           dbRef.push({
             url: imageName,
-            timestamp: new Date().getTime(),
+            timestamp:
+              getImageDate(imageElement)?.getTime() || new Date().getTime(),
           });
         });
       });
   }
+};
+
+const getImageDate = (imageElement) => {
+  let altText = imageElement?.alt;
+  let match = altText?.match(/on (.* \d*, \d{4})/);
+  return match && match[1] && new Date(match[1]);
 };
