@@ -191,7 +191,7 @@ const ImageCheck = ({ imageId, checked, onCheckClick }) => {
           onClick={onCheckClick}
         />
       ) : (
-        <Chip label="No image date :/" />
+        <Chip style={{ margin: 5 }} label="No image date :/" />
       )}
     </Portal>
   );
@@ -279,5 +279,15 @@ const uploadImages = async (imageIds, user) => {
 const getImageDate = (imageElement) => {
   let altText = imageElement?.alt;
   let match = altText?.match(/on (.* \d*, \d{4})/);
-  return match && match[1] && new Date(match[1]);
+  if (match && match[1]) {
+    return new Date(match[1]);
+  }
+
+  let timeElement = Array.from(document.querySelectorAll("time"))
+    .map((node) => node.parentElement)
+    .find((a: HTMLLinkElement) => a && a.href && !a.href.includes("/c/"))
+    ?.querySelector("time")
+    ?.getAttribute("datetime");
+
+  return timeElement && new Date(timeElement);
 };
