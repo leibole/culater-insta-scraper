@@ -186,15 +186,14 @@ const ImageCheck = ({ imageId, checked, onCheckClick }) => {
 
   return (
     <Portal>
-      {imageDate ? (
+      <div style={{ display: "flex", flexDirection: "row" }}>
         <Checkbox
-          style={{ position: "absolute" }}
+          style={{ width: 30 }}
           checked={checked}
           onClick={onCheckClick}
         />
-      ) : (
-        <Chip style={{ margin: 5 }} label="No image date :/" />
-      )}
+        {!imageDate && <Chip style={{ margin: 5 }} label="No image date :/" />}
+      </div>
     </Portal>
   );
 };
