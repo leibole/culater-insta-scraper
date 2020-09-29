@@ -92,6 +92,7 @@ const App = () => {
           image.setAttribute("data-culater", "used");
           newCanvas.setAttribute("data-culater", "used");
           newDiv.setAttribute("data-culater", "used");
+          newCheckDiv.setAttribute("data-culater", "used");
         });
         setImageIds(newImagesIds);
         setCheckedItems({});
@@ -141,32 +142,33 @@ const App = () => {
         placeholder="User Name"
       />
       {imageIds.map((imageId) => (
-        <div key={imageId}>
-          <ImageCheck
-            imageId={imageId}
-            onCheckClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              let newCheckItems = { ...checkItems };
-              newCheckItems[imageId] = !checkItems[imageId];
-              setCheckedItems(newCheckItems);
-            }}
-            checked={!!checkItems[imageId]}
-          />
-
-          <ImageAddon
-            imageId={imageId}
-            ready={ready}
-            onCheckClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              let newCheckItems = { ...checkItems };
-              newCheckItems[imageId] = !checkItems[imageId];
-              setCheckedItems(newCheckItems);
-            }}
-            checked={!!checkItems[imageId]}
-          />
-        </div>
+        <ImageAddon
+          key={imageId}
+          imageId={imageId}
+          ready={ready}
+          onCheckClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let newCheckItems = { ...checkItems };
+            newCheckItems[imageId] = !checkItems[imageId];
+            setCheckedItems(newCheckItems);
+          }}
+          checked={!!checkItems[imageId]}
+        />
+      ))}
+      {imageIds.map((imageId) => (
+        <ImageCheck
+          key={imageId}
+          imageId={imageId}
+          onCheckClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let newCheckItems = { ...checkItems };
+            newCheckItems[imageId] = !checkItems[imageId];
+            setCheckedItems(newCheckItems);
+          }}
+          checked={!!checkItems[imageId]}
+        />
       ))}
     </Paper>
   );
@@ -243,13 +245,6 @@ const ImageAddon = ({ imageId, ready, checked, onCheckClick }) => {
   return (
     <Portal>
       {loading && <CircularProgress style={{ position: "absolute" }} />}
-      {!loading && (
-        <Checkbox
-          style={{ position: "absolute" }}
-          checked={checked}
-          onClick={onCheckClick}
-        />
-      )}
     </Portal>
   );
 };
