@@ -112,7 +112,7 @@ const App = () => {
 
   return (
     <Paper style={{ margin: 15, position: "fixed", top: 0, padding: 15 }}>
-      <h3>Culater actions:</h3>
+      <h3>CULA actions:</h3>
       <br />
       <Button onClick={injectIntoImages} variant="contained" color="primary">
         Find faces

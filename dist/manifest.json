@@ -1,9 +1,9 @@
 {
-  "name": "TS/R/WP Chrome Extension",
+  "name": "CULA Instagram Helper",
   "version": "0.0.1",
   "manifest_version": 2,
   "description": "Boilerplate for a Chrome extension with TypeScript, React, and Webpack.",
-  "homepage_url": "https://duo.com/labs",
+  "homepage_url": "https://cula.me",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
